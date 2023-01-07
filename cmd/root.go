@@ -55,10 +55,6 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
-	//flagName := "output"
-	//err = rootCmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	//	return []string{"json", "table", "yaml"}, cobra.ShellCompDirectiveDefault
-	//})
 	if err != nil {
 		os.Exit(1)
 	}
