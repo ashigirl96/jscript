@@ -55,17 +55,16 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
-	flagName := "output"
-	err = rootCmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return []string{"json", "table", "yaml"}, cobra.ShellCompDirectiveDefault
-	})
+	//flagName := "output"
+	//err = rootCmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	//	return []string{"json", "table", "yaml"}, cobra.ShellCompDirectiveDefault
+	//})
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
 func init() {
-	fmt.Println("HELLO!!")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().StringP("package", "p", "./package.json", "path of package.json")
