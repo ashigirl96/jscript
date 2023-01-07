@@ -6,7 +6,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -29,25 +28,26 @@ func (p *PackageJson) String() string {
 	return strings.Join(result, "\n")
 }
 
-var result PackageJson
+var packageJson PackageJson
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use: "jscript",
-	Run: func(cmd *cobra.Command, args []string) {
-		packageJson, err := cmd.Flags().GetString("package")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		packageJsonPath, err := cmd.Flags().GetString("package")
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-		raw, err := os.ReadFile(packageJson)
+		raw, err := os.ReadFile(packageJsonPath)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-		err = json.Unmarshal(raw, &result)
+		err = json.Unmarshal(raw, &packageJson)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-		fmt.Println(&result)
+		fmt.Println(&packageJson)
+		return nil
 	},
 }
 
@@ -55,6 +55,10 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
+	flagName := "output"
+	err = rootCmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return []string{"json", "table", "yaml"}, cobra.ShellCompDirectiveDefault
+	})
 	if err != nil {
 		os.Exit(1)
 	}
