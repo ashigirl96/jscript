@@ -14,7 +14,7 @@ import (
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "A brief description of your command",
-	//Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		manager, err := pkg.GetPackageManager()
 		if err != nil {
