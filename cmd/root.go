@@ -8,13 +8,28 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
+type Scripts = map[string]string
+
 type PackageJson struct {
-	Scripts map[string]string `json:"scripts"`
+	Scripts Scripts `json:"scripts"`
 }
+
+func (p *PackageJson) String() string {
+	var result []string
+	for name, command := range p.Scripts {
+		s := fmt.Sprintf("\x1b[32m%s\x1b[m:", name)
+		script := fmt.Sprintf("%-24s%s", s, command)
+		result = append(result, script)
+	}
+	return strings.Join(result, "\n")
+}
+
+var result PackageJson
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -28,12 +43,11 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		var result PackageJson
-		err = json.Unmarshal([]byte(raw), &result)
+		err = json.Unmarshal(raw, &result)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%#v", result)
+		fmt.Println(&result)
 	},
 }
 
