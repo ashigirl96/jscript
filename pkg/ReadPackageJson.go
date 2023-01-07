@@ -23,6 +23,14 @@ func (p *IPackageJson) String() string {
 	return strings.Join(result, "\n")
 }
 
+func (p *IPackageJson) GetCommands() []string {
+	var commands []string
+	for name, command := range PackageJson.Scripts {
+		commands = append(commands, fmt.Sprintf("%s\t%s", name, command))
+	}
+	return commands
+}
+
 var PackageJson IPackageJson
 
 func ReadPackageJson(path string) error {
