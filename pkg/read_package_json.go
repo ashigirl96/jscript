@@ -23,6 +23,8 @@ func (p *IPackageJson) String() string {
 	return strings.Join(result, "\n")
 }
 
+var PackageJson IPackageJson
+
 func (p *IPackageJson) GetCommands() []string {
 	var commands []string
 	for name, command := range PackageJson.Scripts {
@@ -30,8 +32,6 @@ func (p *IPackageJson) GetCommands() []string {
 	}
 	return commands
 }
-
-var PackageJson IPackageJson
 
 func ReadPackageJson(path string) error {
 	raw, err := os.ReadFile(path)
