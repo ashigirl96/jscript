@@ -22,6 +22,7 @@ test: deps
 lint: dev-deps
 	golangci-lint run ./...
 	find . -print | grep --regex '.*\.go' | xargs goimports -w -local "github.com/your/package"
+	git mod tidy
 
 # build binary
 .PHONY: build
