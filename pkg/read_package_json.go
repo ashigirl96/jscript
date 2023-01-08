@@ -14,19 +14,19 @@ type IPackageJson struct {
 }
 
 func (p *IPackageJson) String() string {
-	var result []string
+	commands := make([]string, 0, len(PackageJson.Scripts))
 	for name, command := range p.Scripts {
 		s := fmt.Sprintf("\x1b[32m%s\x1b[m:", name)
-		script := fmt.Sprintf("%-24s%s", s, command)
-		result = append(result, script)
+		command := fmt.Sprintf("%-24s%s", s, command)
+		commands = append(commands, command)
 	}
-	return strings.Join(result, "\n")
+	return strings.Join(commands, "\n")
 }
 
 var PackageJson IPackageJson
 
 func (p *IPackageJson) GetCommands() []string {
-	var commands []string
+	commands := make([]string, 0, len(PackageJson.Scripts))
 	for name, command := range PackageJson.Scripts {
 		commands = append(commands, fmt.Sprintf("%s\t%s", name, command))
 	}
