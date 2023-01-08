@@ -18,13 +18,16 @@ const (
 )
 
 func GetPackageManager() (Manager, error) {
-	if _, err := os.Stat("./package-lock.json"); err == nil {
+	npmLock := PackageJsonDir.Path("package-lock.json")
+	if _, err := os.Stat(npmLock); err == nil {
 		return Npm, nil
 	}
-	if _, err := os.Stat("./yarn.lock"); err == nil {
+	yarnLock := PackageJsonDir.Path("yarn.lock")
+	if _, err := os.Stat(yarnLock); err == nil {
 		return Yarn, nil
 	}
-	if _, err := os.Stat("./pnpm-lock.yaml"); err == nil {
+	pnpmLock := PackageJsonDir.Path("pnpm-lock.yaml")
+	if _, err := os.Stat(pnpmLock); err == nil {
 		return Pnpm, nil
 	}
 	return Other, errors.New("never support that manager")

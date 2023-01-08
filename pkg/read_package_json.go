@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	path2 "path"
 	"strings"
 )
 
@@ -13,13 +14,16 @@ type IPackageJson struct {
 	Scripts Scripts `json:"scripts"`
 }
 
+type IPackageJsonDir struct{ Dir string }
+
 var PackageJson IPackageJson
+var PackageJsonDir IPackageJsonDir
 
 func (p *IPackageJson) String() string {
 	commands := make([]string, 0, len(PackageJson.Scripts))
 	for name, command := range p.Scripts {
 		s := fmt.Sprintf("\x1b[32m%s\x1b[m:", name)
-		command := fmt.Sprintf("%-24s%s", s, command)
+		command := fmt.Sprintf("%-20s\t%s", s, command)
 		commands = append(commands, command)
 	}
 	return strings.Join(commands, "\n")
@@ -33,7 +37,8 @@ func (p *IPackageJson) GetCommands() []string {
 	return commands
 }
 
-func ReadPackageJson(path string) error {
+func ReadPackageJson() error {
+	path := PackageJsonDir.Path("package.json")
 	raw, err := os.ReadFile(path)
 	if err != nil {
 		return err
@@ -43,4 +48,15 @@ func ReadPackageJson(path string) error {
 		return err
 	}
 	return nil
+}
+
+func init() {
+	PackageJsonDir = IPackageJsonDir{
+		os.Getenv("PACKAGE_DIR"),
+	}
+}
+
+func (d *IPackageJsonDir) Path(name string) string {
+	return path2.Join(d.Dir, name)
+
 }

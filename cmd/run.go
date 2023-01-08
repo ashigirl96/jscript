@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -17,6 +18,9 @@ var runCmd = &cobra.Command{
 	Short: "run one script that selected from package.json scripts",
 	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if pkg.PackageJsonDir.Dir != "" {
+			return errors.New("cannot run this directory")
+		}
 		manager, err := pkg.GetPackageManager()
 		if err != nil {
 			return err
@@ -29,6 +33,9 @@ var runCmd = &cobra.Command{
 		return nil
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		if err := pkg.ReadPackageJson(); err != nil {
+			return nil, cobra.ShellCompDirectiveNoFileComp
+		}
 		if len(args) != 0 {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}

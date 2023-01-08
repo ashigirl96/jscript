@@ -13,15 +13,12 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use: "jscript",
-	//PreRunE: func(cmd *cobra.Command, args []string) error {
-	//	packageJsonPath, err := cmd.Flags().GetString("package")
-	//	if err != nil {
-	//		return err
-	//	}
-	//	return pkg.ReadPackageJson(packageJsonPath)
-	//},
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := pkg.ReadPackageJson(); err != nil {
+			return err
+		}
 		fmt.Println(&pkg.PackageJson)
+		return nil
 	},
 }
 
@@ -34,9 +31,3 @@ func Execute() {
 		os.Exit(1)
 	}
 }
-
-//func init() {
-//	// Cobra also supports local flags, which will only run
-//	// when this action is called directly.
-//	rootCmd.Flags().StringP("package", "p", "./package.json", "path of package.json")
-//}
