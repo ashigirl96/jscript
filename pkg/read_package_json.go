@@ -13,6 +13,8 @@ type IPackageJson struct {
 	Scripts Scripts `json:"scripts"`
 }
 
+var PackageJson IPackageJson
+
 func (p *IPackageJson) String() string {
 	commands := make([]string, 0, len(PackageJson.Scripts))
 	for name, command := range p.Scripts {
@@ -22,8 +24,6 @@ func (p *IPackageJson) String() string {
 	}
 	return strings.Join(commands, "\n")
 }
-
-var PackageJson IPackageJson
 
 func (p *IPackageJson) GetCommands() []string {
 	commands := make([]string, 0, len(PackageJson.Scripts))

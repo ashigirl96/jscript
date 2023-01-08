@@ -21,12 +21,11 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		output, err := manager.Run(args[0])
+		err = manager.Run(args[0])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		fmt.Println(output)
 		return nil
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {

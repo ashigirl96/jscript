@@ -1,7 +1,9 @@
 package pkg
 
 import (
+	"bufio"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 )
@@ -41,6 +43,20 @@ func (m *Manager) String() string {
 	}
 }
 
-func (m *Manager) Run(command string) ([]byte, error) {
-	return exec.Command(m.String(), "run", command).Output()
+func (m *Manager) Run(command string) error {
+	cmd := exec.Command(m.String(), "run", command)
+	stdout, _ := cmd.StdoutPipe()
+	cmd.Start()
+	oneByte := make([]byte, 100)
+	for {
+		_, err := stdout.Read(oneByte)
+		if err != nil {
+			fmt.Printf(err.Error())
+			break
+		}
+		r := bufio.NewReader(stdout)
+		line, _, _ := r.ReadLine()
+		fmt.Println(string(line))
+	}
+	return cmd.Wait()
 }
