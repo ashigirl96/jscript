@@ -12,7 +12,12 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use: "jscript",
+	Use:   "jscript",
+	Short: "Show scripts from package.json 'scripts'",
+	Long: `
+Show scripts from package.json 'scripts'
+If you specify the PACKAGE_DIR environment variable, you can also view the package.json scripts in another directory.
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := pkg.ReadPackageJson(); err != nil {
 			return err
