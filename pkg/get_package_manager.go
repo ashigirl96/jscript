@@ -43,20 +43,21 @@ func (m *Manager) String() string {
 	}
 }
 
+// Run 親プロセスから切り出したい
 func (m *Manager) Run(command string) error {
 	cmd := exec.Command(m.String(), "run", command)
 	stdout, _ := cmd.StdoutPipe()
-	cmd.Start()
-	oneByte := make([]byte, 100)
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+	outBuffer := make([]byte, 100)
 	for {
-		_, err := stdout.Read(oneByte)
-		if err != nil {
-			fmt.Printf(err.Error())
-			break
+		if _, err := stdout.Read(outBuffer); err != nil {
+			return err
 		}
 		r := bufio.NewReader(stdout)
 		line, _, _ := r.ReadLine()
 		fmt.Println(string(line))
 	}
-	return cmd.Wait()
 }
