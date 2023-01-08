@@ -8,6 +8,7 @@ deps:
 ## Install dev-deps
 .PHONY: dev-deps
 dev-deps: deps
+	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/Songmu/make2help/cmd/make2help@latest
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.1
 
@@ -20,7 +21,7 @@ test: deps
 .PHONY: lint
 lint: dev-deps
 	golangci-lint run ./...
-	go mod tidy
+	find . -print | grep --regex '.*\.go' | xargs goimports -w -local "github.com/your/package"
 
 # build binary
 .PHONY: build

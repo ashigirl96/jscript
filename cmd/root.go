@@ -5,9 +5,10 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/ashigirl96/jscript/pkg"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 var rootCmd = &cobra.Command{
