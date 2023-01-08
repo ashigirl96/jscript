@@ -4,7 +4,7 @@ LDFLAGS := -X main.revision=$(REVISION)
 ## Install deps
 .PHONY: deps
 deps:
-	go get -v -d
+	go mod download
 ## Install dev-deps
 .PHONY: dev-deps
 dev-deps: deps
