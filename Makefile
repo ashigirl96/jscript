@@ -14,7 +14,7 @@ dev-deps: deps
 # Run test
 .PHONE: test
 test: deps
-	go test ./...
+	go test -race ./...
 
 # Lint
 .PHONY: lint
