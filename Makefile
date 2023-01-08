@@ -9,6 +9,7 @@ deps:
 .PHONY: dev-deps
 dev-deps: deps
 	go install github.com/Songmu/make2help/cmd/make2help@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.1
 
 # Run test
 .PHONE: test
@@ -18,7 +19,8 @@ test: deps
 # Lint
 .PHONY: lint
 lint: dev-deps
-	go vet ./...
+	golangci-lint run ./...
+	go mod tidy
 
 # build binary
 .PHONY: build
