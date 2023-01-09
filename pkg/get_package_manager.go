@@ -4,8 +4,11 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
+
+	"github.com/creack/pty"
 )
 
 type Manager int
@@ -49,18 +52,47 @@ func (m *Manager) String() string {
 // Run 親プロセスから切り出したい
 func (m *Manager) Run(command string) error {
 	cmd := exec.Command(m.String(), "run", command)
+	stdpty, stdtty, _ := pty.Open()
+	defer func(stdtty *os.File) {
+		if err := stdtty.Close(); err != nil {
+		}
+	}(stdtty)
+	cmd.Stdin = stdtty
+	cmd.Stdout = stdtty
+	errpty, errtty, _ := pty.Open()
+	defer func(errtty *os.File) {
+		if err := errtty.Close(); err != nil {
+		}
+	}(errtty)
+	cmd.Stderr = errtty
 	stdout, _ := cmd.StdoutPipe()
-	err := cmd.Start()
-	if err != nil {
+	stderr, _ := cmd.StderrPipe()
+	if err := cmd.Start(); err != nil {
 		return err
 	}
-	outBuffer := make([]byte, 100)
-	for {
-		if _, err := stdout.Read(outBuffer); err != nil {
-			return err
+	go func() {
+		_, err := io.Copy(os.Stdout, stdpty)
+		if err != nil {
+			return
 		}
-		r := bufio.NewReader(stdout)
-		line, _, _ := r.ReadLine()
-		fmt.Println(string(line))
+		scanner := bufio.NewScanner(stdout)
+		for scanner.Scan() {
+			fmt.Println(scanner.Text())
+		}
+	}()
+	go func() {
+		_, err := io.Copy(os.Stderr, errpty)
+		if err != nil {
+			return
+		}
+		scanner := bufio.NewScanner(stderr)
+		for scanner.Scan() {
+			fmt.Println(scanner.Text())
+		}
+	}()
+	if err := cmd.Wait(); err != nil {
+		return err
 	}
+	return nil
+
 }
