@@ -16,7 +16,13 @@ import (
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "run one script that selected from package.json scripts",
-	Args:  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
+	Args: func(cmd *cobra.Command, args []string) error {
+		script := []string{args[0]}
+		if err := cobra.OnlyValidArgs(cmd, script); err != nil {
+			return err
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if pkg.PackageJsonDir.Dir != "" {
 			return errors.New("cannot run this directory")
@@ -25,7 +31,7 @@ var runCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		err = manager.Run(args[0])
+		err = manager.Run(args...)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -36,11 +42,11 @@ var runCmd = &cobra.Command{
 		if err := pkg.ReadPackageJson(); err != nil {
 			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
-		if len(args) != 0 {
-			return nil, cobra.ShellCompDirectiveNoFileComp
+		if len(args) == 0 {
+			commands := pkg.PackageJson.GetCommands()
+			return commands, cobra.ShellCompDirectiveNoFileComp
 		}
-		commands := pkg.PackageJson.GetCommands()
-		return commands, cobra.ShellCompDirectiveNoFileComp
+		return nil, cobra.ShellCompDirectiveFilterFileExt
 	},
 }
 

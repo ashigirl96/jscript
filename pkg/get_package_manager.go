@@ -50,8 +50,8 @@ func (m *Manager) String() string {
 }
 
 // Run 親プロセスから切り出したい
-func (m *Manager) Run(command string) error {
-	cmd := exec.Command(m.String(), "run", command)
+func (m *Manager) Run(command ...string) error {
+	cmd := exec.Command(m.String(), command...)
 	stdpty, stdtty, _ := pty.Open()
 	defer func(stdtty *os.File) {
 		if err := stdtty.Close(); err != nil {
