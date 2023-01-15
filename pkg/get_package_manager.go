@@ -57,7 +57,8 @@ func (m *Manager) Run(command ...string) error {
 		if err := stdTty.Close(); err != nil {
 		}
 	}(stdTty)
-	cmd.Stdin = stdTty
+	cmd.Stdin = os.Stdin
+	// stdTtyに出力されるものをcmd.Stdoutの出力とする
 	cmd.Stdout = stdTty
 	errPty, errTty, _ := pty.Open()
 	defer func(errTty *os.File) {
