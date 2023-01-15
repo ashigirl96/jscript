@@ -52,26 +52,26 @@ func (m *Manager) String() string {
 // Run 親プロセスから切り出したい
 func (m *Manager) Run(command ...string) error {
 	cmd := exec.Command(m.String(), command...)
-	stdpty, stdtty, _ := pty.Open()
-	defer func(stdtty *os.File) {
-		if err := stdtty.Close(); err != nil {
+	stdPty, stdTty, _ := pty.Open()
+	defer func(stdTty *os.File) {
+		if err := stdTty.Close(); err != nil {
 		}
-	}(stdtty)
-	cmd.Stdin = stdtty
-	cmd.Stdout = stdtty
-	errpty, errtty, _ := pty.Open()
-	defer func(errtty *os.File) {
-		if err := errtty.Close(); err != nil {
+	}(stdTty)
+	cmd.Stdin = stdTty
+	cmd.Stdout = stdTty
+	errPty, errTty, _ := pty.Open()
+	defer func(errTty *os.File) {
+		if err := errTty.Close(); err != nil {
 		}
-	}(errtty)
-	cmd.Stderr = errtty
+	}(errTty)
+	cmd.Stderr = errTty
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
 	if err := cmd.Start(); err != nil {
 		return err
 	}
 	go func() {
-		_, err := io.Copy(os.Stdout, stdpty)
+		_, err := io.Copy(os.Stdout, stdPty)
 		if err != nil {
 			return
 		}
@@ -81,7 +81,7 @@ func (m *Manager) Run(command ...string) error {
 		}
 	}()
 	go func() {
-		_, err := io.Copy(os.Stderr, errpty)
+		_, err := io.Copy(os.Stderr, errPty)
 		if err != nil {
 			return
 		}
