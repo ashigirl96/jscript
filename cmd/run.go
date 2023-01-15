@@ -15,7 +15,7 @@ import (
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "run one script that selected from package.json scripts",
+	Short: "Run one script that selected from package.json scripts",
 	Args: func(cmd *cobra.Command, args []string) error {
 		script := []string{args[0]}
 		if err := cobra.OnlyValidArgs(cmd, script); err != nil {
