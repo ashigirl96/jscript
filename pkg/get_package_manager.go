@@ -1,9 +1,7 @@
 package pkg
 
 import (
-	"bufio"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -58,7 +56,7 @@ func (m *Manager) Run(command ...string) error {
 		}
 	}(stdTty)
 	cmd.Stdin = os.Stdin
-	// stdTtyに出力されるものをcmd.Stdoutの出力とする
+	// cmd.Stdoutへの出力をstyTtyにする
 	cmd.Stdout = stdTty
 	errPty, errTty, _ := pty.Open()
 	defer func(errTty *os.File) {
@@ -66,8 +64,6 @@ func (m *Manager) Run(command ...string) error {
 		}
 	}(errTty)
 	cmd.Stderr = errTty
-	stdout, _ := cmd.StdoutPipe()
-	stderr, _ := cmd.StderrPipe()
 	if err := cmd.Start(); err != nil {
 		return err
 	}
@@ -76,19 +72,11 @@ func (m *Manager) Run(command ...string) error {
 		if err != nil {
 			return
 		}
-		scanner := bufio.NewScanner(stdout)
-		for scanner.Scan() {
-			fmt.Println(scanner.Text())
-		}
 	}()
 	go func() {
 		_, err := io.Copy(os.Stderr, errPty)
 		if err != nil {
 			return
-		}
-		scanner := bufio.NewScanner(stderr)
-		for scanner.Scan() {
-			fmt.Println(scanner.Text())
 		}
 	}()
 	if err := cmd.Wait(); err != nil {
